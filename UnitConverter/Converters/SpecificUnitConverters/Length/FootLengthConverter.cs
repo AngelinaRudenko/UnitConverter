@@ -1,21 +1,21 @@
 ﻿using UnitConverter.Contracts;
 
-namespace UnitConverter.Converters.Length
+namespace UnitConverter.Converters.SpecificUnitConverters.Length
 {
     internal class FootLengthConverter : ISpecificUnitConverter
     {
+        public string GetPluralNameForOutput => "feet";
+
         // Convert feet to meters
         public double ToBase(double value)
         {
-            var meters = value / 3.2808399;
-            return meters;
+            return value / 3.2808399;
         }
 
         // Convert meters to feet
         public double FromBase(double value)
         {
-            var feet = value * 3.2808399;
-            return feet;
+            return value * 3.2808399;
         }
     }
 }

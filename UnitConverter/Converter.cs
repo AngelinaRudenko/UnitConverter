@@ -1,13 +1,12 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using UnitConverter.Converters;
+﻿using System.Linq;
+using UnitConverter.Converters.Constants;
 using UnitConverter.Decoder;
 
 namespace UnitConverter
 {
     public class Converter
     {
-        private InputDecoder InputDecoder;
+        private readonly InputDecoder InputDecoder;
 
         public Converter()
         {
@@ -16,24 +15,14 @@ namespace UnitConverter
 
         public string Convert(string from, string to)
         {
-            /*
-             * TODO: Make static
-             */
+            var decodedInput = InputDecoder.Decode(from, to);
 
-            var fromDecoded = InputDecoder.DecodeFrom(from);
-            var toDecoded = InputDecoder.DecodeUnitString(to);
+            var converter = ConverterConstants.Converters.FirstOrDefault(
+                x => x.Converters.ContainsKey(decodedInput.ToUnit));
 
-            if (string.IsNullOrEmpty(fromDecoded.Item2))
-                throw new ValidationException("Unit not found.");
+            var result = converter.Convert(decodedInput.FromUnit, decodedInput.ToUnit, decodedInput.FromValue);
 
-            var lengthConverter = new LengthConverter();
-
-            var unitFrom = lengthConverter.PossibleNames[fromDecoded.Item2];
-            var unitTo = lengthConverter.PossibleNames[toDecoded];
-
-            var result = lengthConverter.Convert(unitFrom, unitTo, fromDecoded.Item1);
-
-            return Math.Round(result, 2) + " " + lengthConverter.PluralNamesForOutput[unitTo];
+            return result;
         }
     }
 }

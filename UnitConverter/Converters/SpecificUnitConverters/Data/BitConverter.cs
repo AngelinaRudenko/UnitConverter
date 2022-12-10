@@ -1,9 +1,11 @@
 ﻿using UnitConverter.Contracts;
 
-namespace UnitConverter.Converters.Length
+namespace UnitConverter.Converters.SpecificUnitConverters.Data
 {
-    internal class MeterLengthConverter : ISpecificUnitConverter
+    internal class BitConverter : ISpecificUnitConverter
     {
+        public string GetPluralNameForOutput => "bits";
+
         public double ToBase(double value)
         {
             return value;

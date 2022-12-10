@@ -1,21 +1,21 @@
 ﻿using UnitConverter.Contracts;
 
-namespace UnitConverter.Converters.Length
+namespace UnitConverter.Converters.SpecificUnitConverters.Length
 {
     internal class InchLengthConverter : ISpecificUnitConverter
     {
+        public string GetPluralNameForOutput => "inches";
+
         // Convert inches to meters
         public double ToBase(double value)
         {
-            var meters = value * 0.0254;
-            return meters;
+            return value * 0.0254;
         }
 
         // Convert meters to inches
         public double FromBase(double value)
         {
-            var inches = value / 0.0254;
-            return inches;
+            return value / 0.0254;
         }
     }
 }

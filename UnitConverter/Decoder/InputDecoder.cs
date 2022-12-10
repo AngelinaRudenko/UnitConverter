@@ -3,14 +3,44 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnitConverter.Converters;
+using UnitConverter.Converters.Constants;
 
 namespace UnitConverter.Decoder
 {
+    internal struct DecodedInputDTO
+    {
+        public string FromUnit { get; set; }
+        public string ToUnit { get; set; }
+        public double FromValue { get; set; }
+    }
+
     internal class InputDecoder
     {
+        public DecodedInputDTO Decode(string rawFrom, string rawTo)
+        {
+            var from = DecodeFrom(rawFrom);
+            var toUnit = DecodeUnitString(rawTo);
+
+            var fromConverter = ConverterConstants.Converters.FirstOrDefault(
+                x => x.Converters.ContainsKey(from.unit));
+
+            var toConverter = ConverterConstants.Converters.FirstOrDefault(
+                x => x.Converters.ContainsKey(toUnit));
+
+            if (fromConverter?.GetType() != toConverter?.GetType())
+                throw new ValidationException("Not possible to convert between group of units.");
+
+            return new DecodedInputDTO()
+            {
+                FromUnit = from.unit,
+                ToUnit = toUnit,
+                FromValue = from.value
+            };
+        }
+
         // Decode from
-        // Returns value number and unit
-        public Tuple<double, string> DecodeFrom(string from)
+        // Returns value number and correct unit name
+        private (double value, string unit) DecodeFrom(string from)
         {
             var text = from.Trim();
 
@@ -26,18 +56,23 @@ namespace UnitConverter.Decoder
 
             var unitName = DecodeUnitString(unitStr);
 
-            return new Tuple<double, string>(number, unitName);
+            return (number, unitName);
         }
 
-        public string DecodeUnitString(string text)
+        private string DecodeUnitString(string rawUnitName)
         {
-            var lengthConverter = new LengthConverter();
+            var possibleName = rawUnitName.Trim();
 
-            var unitName = lengthConverter.PossibleNames.Keys
-                .FirstOrDefault(x =>
-                    x.Contains(text.Trim(), StringComparison.OrdinalIgnoreCase));
+            foreach (var categoryOfUnitConverter in ConverterConstants.Converters)
+            {
+                var correctUnitName = categoryOfUnitConverter.Converters.Keys
+                    .FirstOrDefault(x => x.Contains(possibleName, StringComparison.OrdinalIgnoreCase));
 
-            return unitName;
+                if (!string.IsNullOrEmpty(correctUnitName))
+                    return correctUnitName;
+            }
+
+            throw new ValidationException("Unit not found.");
         }
     }
 }

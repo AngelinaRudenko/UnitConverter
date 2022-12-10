@@ -6,35 +6,31 @@ using UnitConverter.Converters.Base.Contracts;
 
 namespace UnitConverter.Converters.Base
 {
-    internal abstract class BaseCategoryOfUnitsConverter<TUnitEnum> : ICategoryOfUnitsConverter<TUnitEnum> where TUnitEnum : Enum
+    internal abstract class BaseCategoryOfUnitsConverter : ICategoryOfUnitsConverter
     {
-        public abstract Dictionary<string, TUnitEnum> PossibleNames { get; }
+        public abstract Dictionary<string, ISpecificUnitConverter> Converters { get; }
 
-        public abstract Dictionary<TUnitEnum, string> PluralNamesForOutput { get; }
-
-        public abstract Dictionary<TUnitEnum, ISpecificUnitConverter> Converters { get; }
-
-        public virtual double Convert(TUnitEnum fromUnit, TUnitEnum toUnit, double value)
+        public virtual string Convert(string fromUnit, string toUnit, double value)
         {
-            // TODO: handle errors
-            var baseValue = Converters[fromUnit].ToBase(value);
-            var result = Converters[toUnit].FromBase(baseValue);
-            return result;
+            var toBaseUnitConverter = GetSuitableConverter(fromUnit);
+            var toDestinationUnitConverter = GetSuitableConverter(toUnit);
+
+            var baseValue = toBaseUnitConverter.ToBase(value);
+            var result = toDestinationUnitConverter.FromBase(baseValue);
+
+            return Math.Round(result, 2) + " " + toDestinationUnitConverter.GetPluralNameForOutput;
         }
 
-        public virtual bool Contains(string unitPossibleName)
+        protected ISpecificUnitConverter GetSuitableConverter(string rawUnitName)
         {
-            unitPossibleName = unitPossibleName.Trim();
-            var possibleName = PossibleNames.Keys
-                .FirstOrDefault(x => x.Contains(unitPossibleName));
+            var possibleName = rawUnitName.Trim();
+            var correctUnitName = Converters.Keys
+                .FirstOrDefault(x => x.Contains(possibleName, StringComparison.OrdinalIgnoreCase));
 
-            return !string.IsNullOrEmpty(possibleName);
-        }
+            if (string.IsNullOrEmpty(correctUnitName))
+                throw new NotImplementedException($"Converter for unit type \"{rawUnitName}\" is not implemented.");
 
-        public virtual TUnitEnum GetTypeByPossibleName(string unitPossibleName)
-        {
-            // TODO: handle errors
-            return PossibleNames[unitPossibleName];
+            return Converters[correctUnitName];
         }
     }
 }
