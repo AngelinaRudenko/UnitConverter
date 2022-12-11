@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text.RegularExpressions;
 using UnitConverter.Converters.Base;
+using UnitConverter.Converters.Constants;
+using UnitConverter.Extensions;
 
 namespace UnitConverter.Decoder
 {
@@ -18,23 +21,26 @@ namespace UnitConverter.Decoder
         public DecodedInputDTO Decode(string rawFrom, string rawTo)
         {
             var from = DecodeFrom(rawFrom);
+            var fromUnit = DecodeUnitString(from.possibleName);
             var to = DecodeUnitString(rawTo);
 
-            if (from.categoryName != to.categoryName)
+            if (fromUnit.categoryName != to.categoryName)
                 throw new ValidationException("Impossible conversion between group of units.");
 
             return new DecodedInputDTO()
             {
-                FromUnit = from.unitName,
+                FromUnit = fromUnit.unitName,
+                FromPrefix = fromUnit.prefix,
                 ToUnit = to.unitName,
+                ToPrefix = to.prefix,
                 FromValue = from.value,
-                CategoryConverterName = from.categoryName
+                CategoryConverterName = fromUnit.categoryName
             };
         }
 
         // Decode from
         // Returns value number and correct unit name
-        private (double value, string unitName, string categoryName) DecodeFrom(string from)
+        private (double value, string possibleName) DecodeFrom(string from)
         {
             var text = from.Trim();
 
@@ -45,17 +51,22 @@ namespace UnitConverter.Decoder
 
             var number = Convert.ToDouble(numberStr);
 
-            var cutInputStartIndex = text.IndexOf(numberStr, StringComparison.Ordinal) + numberStr.Length;
-            var unitStr = text.Substring(cutInputStartIndex, text.Length - cutInputStartIndex);
+            // var cutInputStartIndex = text.IndexOf(numberStr, StringComparison.Ordinal) + numberStr.Length;
+            // var possibleName = text.Substring(cutInputStartIndex, text.Length - cutInputStartIndex);
 
-            var unit = DecodeUnitString(unitStr);
+            var possibleName = text.RemoveFirstCharacters(numberStr.Length);
 
-            return (number, unit.unitName, unit.categoryName);
+            return (number, possibleName);
         }
 
-        private (string unitName, string categoryName) DecodeUnitString(string rawUnitName)
+        private (string unitName, string prefix, string categoryName) DecodeUnitString(string rawUnitName)
         {
-            var possibleName = rawUnitName.Trim();
+            var possibleName = rawUnitName.Trim().ToLower();
+            var prefix = MetricPrefixes.SIPrefixes.Keys
+                .FirstOrDefault(metricPrefix => possibleName.StartsWith(metricPrefix, StringComparison.OrdinalIgnoreCase));
+
+            if (prefix != null && !string.IsNullOrEmpty(prefix))
+                possibleName = possibleName.RemoveFirstCharacters(prefix.Length);
 
             foreach (var categoryConverter in CategoryConverters)
             {
@@ -63,8 +74,8 @@ namespace UnitConverter.Decoder
 
                 foreach (var specificConverterName in specificConverterNames)
                 {
-                    if (specificConverterName.Contains(possibleName))
-                        return (specificConverterName, categoryConverter.Key);
+                    if (specificConverterName.Contains(possibleName, StringComparison.OrdinalIgnoreCase))
+                        return (specificConverterName, prefix, categoryConverter.Key);
                 }
             }
 

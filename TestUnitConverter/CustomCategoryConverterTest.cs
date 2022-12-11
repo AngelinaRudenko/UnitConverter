@@ -3,7 +3,6 @@ using NUnit.Framework;
 using UnitConverter;
 using UnitConverter.Converters.Base;
 using UnitConverter.Converters.Base.Contracts;
-using UnitConverter.Converters.SpecificUnitConverters.Length;
 
 namespace TestUnitConverter
 {

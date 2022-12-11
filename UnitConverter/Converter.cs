@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnitConverter.Converters.Base.Contracts;
 using UnitConverter.Converters;
@@ -26,8 +27,7 @@ namespace UnitConverter
             var inputDecoder = new InputDecoder(CategoryConverters);
             var decodedInput = inputDecoder.Decode(from, to);
 
-            var result = CategoryConverters[decodedInput.CategoryConverterName]
-                    .Convert(decodedInput.FromUnit, decodedInput.ToUnit, decodedInput.FromValue);
+            var result = CategoryConverters[decodedInput.CategoryConverterName].Convert(decodedInput);
 
             return result;
         }

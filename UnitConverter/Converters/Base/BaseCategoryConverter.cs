@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnitConverter.Converters.Base.Contracts;
+using UnitConverter.Converters.Constants;
+using UnitConverter.Decoder;
+using UnitConverter.Extensions;
 
 namespace UnitConverter.Converters.Base
 {
@@ -15,15 +18,18 @@ namespace UnitConverter.Converters.Base
             return Converters.Keys.ToArray();
         }
 
-        public virtual string Convert(string fromUnit, string toUnit, double value)
+        public virtual string Convert(DecodedInputDTO input)
         {
-            var toBaseUnitConverter = GetSuitableConverter(fromUnit);
-            var toDestinationUnitConverter = GetSuitableConverter(toUnit);
+            var fromValue = input.FromValue.ConvertFromPrefix(input.FromPrefix);
 
-            var baseValue = toBaseUnitConverter.ToBase(value);
-            var result = toDestinationUnitConverter.FromBase(baseValue);
+            var toBaseUnitConverter = GetSuitableConverter(input.FromUnit);
+            var toDestinationUnitConverter = GetSuitableConverter(input.ToUnit);
 
-            return Math.Round(result, 2) + " " + toDestinationUnitConverter.GetPluralNameForOutput;
+            var baseValue = toBaseUnitConverter.ToBase(fromValue);
+            var result = (double) toDestinationUnitConverter.FromBase(baseValue);
+            result = result.ConvertToPrefix(input.ToPrefix);
+
+            return ResultToString(result, input.ToPrefix, toDestinationUnitConverter.GetPluralNameForOutput);
         }
 
         protected ISpecificUnitConverter GetSuitableConverter(string unitName)
@@ -43,6 +49,17 @@ namespace UnitConverter.Converters.Base
             {
                 Converters.Add(name, customUnitConverter);
             }
+        }
+
+        private string ResultToString(double value, string prefix, string unitName)
+        {
+            var result = Math.Round(value, 2) + " ";
+
+            if (prefix != null)
+                result += prefix;
+
+            result += unitName;
+            return result;
         }
     }
 }
