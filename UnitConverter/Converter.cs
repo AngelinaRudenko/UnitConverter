@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnitConverter.Converters.Base.Contracts;
 using UnitConverter.Converters;
 using UnitConverter.Decoder;
@@ -22,6 +21,12 @@ namespace UnitConverter
             };
         }
 
+        /// <summary>
+        /// Converts from unit to unit.
+        /// </summary>
+        /// <param name="from">String contains number value and name of specific source unit.</param>
+        /// <param name="to">String contains specific destination nit.</param>
+        /// <returns></returns>
         public string Convert(string from, string to)
         {
             var inputDecoder = new InputDecoder(CategoryConverters);
@@ -32,14 +37,32 @@ namespace UnitConverter
             return result;
         }
 
+        /// <summary>
+        /// Add custom converter.
+        /// </summary>
+        /// <param name="converterCategoryName">Converter category name.</param>
+        /// <param name="possibleNames">Custom specific converter possible names.</param>
+        /// <param name="specificUnitConverter">Specific unit converter.</param>
         public void AddCustomConverter(
             string converterCategoryName,
             IEnumerable<string> possibleNames,
             ISpecificUnitConverter specificUnitConverter)
         {
-            CategoryConverters[converterCategoryName].AddConverter(possibleNames, specificUnitConverter);
+            try
+            {
+                CategoryConverters[converterCategoryName].AddConverter(possibleNames, specificUnitConverter);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                throw new NotImplementedException($"Converter category \"{converterCategoryName}\" does not exist.");
+            }
         }
 
+        /// <summary>
+        /// Add custom category converter.
+        /// </summary>
+        /// <param name="converterCategoryName">Converter category name.</param>
+        /// <param name="categoryConverter">Category converter.</param>
         public void AddCustomCategoryConverter(
             string converterCategoryName,
             BaseCategoryConverter categoryConverter)

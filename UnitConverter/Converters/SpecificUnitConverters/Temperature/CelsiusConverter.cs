@@ -2,6 +2,7 @@
 
 namespace UnitConverter.Converters.SpecificUnitConverters.Temperature
 {
+    // Base temperature unit
     internal class CelsiusConverter : ISpecificUnitConverter
     {
         public string GetPluralNameForOutput => "celsius";

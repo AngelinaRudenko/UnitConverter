@@ -2,6 +2,7 @@
 
 namespace UnitConverter.Converters.SpecificUnitConverters.Data
 {
+    // Base data unit
     internal class BitConverter : ISpecificUnitConverter
     {
         public string GetPluralNameForOutput => "bits";

@@ -2,6 +2,7 @@
 
 namespace UnitConverter.Converters.SpecificUnitConverters.Length
 {
+    // Base length unit
     internal class MeterLengthConverter : ISpecificUnitConverter
     {
         public string GetPluralNameForOutput => "meters";

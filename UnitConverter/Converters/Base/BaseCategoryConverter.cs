@@ -26,7 +26,7 @@ namespace UnitConverter.Converters.Base
             var toDestinationUnitConverter = GetSuitableConverter(input.ToUnit);
 
             var baseValue = toBaseUnitConverter.ToBase(fromValue);
-            var result = (double) toDestinationUnitConverter.FromBase(baseValue);
+            var result = toDestinationUnitConverter.FromBase(baseValue);
             result = result.ConvertToPrefix(input.ToPrefix);
 
             return ResultToString(result, input.ToPrefix, toDestinationUnitConverter.GetPluralNameForOutput);

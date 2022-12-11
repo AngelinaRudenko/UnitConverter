@@ -51,14 +51,13 @@ namespace UnitConverter.Decoder
 
             var number = Convert.ToDouble(numberStr);
 
-            // var cutInputStartIndex = text.IndexOf(numberStr, StringComparison.Ordinal) + numberStr.Length;
-            // var possibleName = text.Substring(cutInputStartIndex, text.Length - cutInputStartIndex);
-
             var possibleName = text.RemoveFirstCharacters(numberStr.Length);
 
             return (number, possibleName);
         }
 
+        // Decode unit string
+        // Return unit name, SI prefix, name of unit category
         private (string unitName, string prefix, string categoryName) DecodeUnitString(string rawUnitName)
         {
             var possibleName = rawUnitName.Trim().ToLower();
