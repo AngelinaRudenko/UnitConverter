@@ -3,8 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnitConverter;
-using UnitConverter.Contracts;
-using UnitConverter.Converters.Enum;
+using UnitConverter.Converters.Base.Contracts;
 
 namespace TestUnitConverter
 {
@@ -12,7 +11,9 @@ namespace TestUnitConverter
     {
         public Converter Converter;
 
-        public class MileConverter : ISpecificUnitConverter
+        #region Specific Converter
+
+        private class MileConverter : ISpecificUnitConverter
         {
             public string GetPluralNameForOutput => "miles";
 
@@ -27,11 +28,13 @@ namespace TestUnitConverter
             }
         }
 
+        #endregion
+
         [SetUp]
         public void Setup()
         {
             Converter = new Converter();
-            Converter.AddCustomConverter(ConverterCategory.Length, new []{ "Miles" }, new MileConverter());
+            Converter.AddCustomConverter("Length", new []{ "Miles" }, new MileConverter());
         }
 
         [Test]

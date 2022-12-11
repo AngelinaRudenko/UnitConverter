@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using UnitConverter.Contracts;
 using UnitConverter.Converters.Base;
+using UnitConverter.Converters.Base.Contracts;
 using UnitConverter.Converters.SpecificUnitConverters.Temperature;
 
 namespace UnitConverter.Converters
 {
     // Base unit for temperature is Celsius
-    internal class TemperatureConverter : BaseCategoryOfUnitsConverter
+    internal class TemperatureConverter : BaseCategoryConverter
     {
         public TemperatureConverter()
         {

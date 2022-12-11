@@ -1,4 +1,4 @@
-﻿using UnitConverter.Contracts;
+﻿using UnitConverter.Converters.Base.Contracts;
 
 namespace UnitConverter.Converters.SpecificUnitConverters.Data
 {

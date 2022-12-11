@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnitConverter.Contracts;
 using UnitConverter.Converters.Base.Contracts;
-using UnitConverter.Converters.SpecificUnitConverters.Length;
 
 namespace UnitConverter.Converters.Base
 {
-    internal abstract class BaseCategoryOfUnitsConverter : ICategoryOfUnitsConverter
+    public abstract class BaseCategoryConverter : ICategoryConverter
     {
+        // Pairs of possible unit names and their converters
         protected Dictionary<string, ISpecificUnitConverter> Converters;
 
-        public Dictionary<string, ISpecificUnitConverter> GetConverters()
+        public string[] GetConverterNames()
         {
-            return Converters;
+            return Converters.Keys.ToArray();
         }
 
         public virtual string Convert(string fromUnit, string toUnit, double value)
@@ -38,12 +37,11 @@ namespace UnitConverter.Converters.Base
             return Converters[correctUnitName];
         }
 
-        public void AddCustomConverter(IEnumerable<string> possibleNames, ISpecificUnitConverter customUnitConverter)
+        public void AddConverter(IEnumerable<string> possibleNames, ISpecificUnitConverter customUnitConverter)
         {
-            Converters.Add("Test", new MeterLengthConverter());
             foreach (var name in possibleNames)
             {
-                Converters.TryAdd(name, customUnitConverter);
+                Converters.Add(name, customUnitConverter);
             }
         }
     }

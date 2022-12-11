@@ -1,4 +1,4 @@
-﻿namespace UnitConverter.Contracts
+﻿namespace UnitConverter.Converters.Base.Contracts
 {
     public interface ISpecificUnitConverter
     {

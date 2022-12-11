@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using UnitConverter.Contracts;
 using UnitConverter.Converters.Base;
+using UnitConverter.Converters.Base.Contracts;
 using UnitConverter.Converters.SpecificUnitConverters.Length;
 
 namespace UnitConverter.Converters
 {
     // Base unit for length is Meter
-    internal class LengthConverter : BaseCategoryOfUnitsConverter
+    internal class LengthConverter : BaseCategoryConverter
     {
         public LengthConverter()
         {
