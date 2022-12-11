@@ -21,7 +21,7 @@ namespace TestUnitConverter
             var toUnitName = "Fahrenheit";
 
             var result = Converter.Convert($"{fromValue} {fromUnitName}", toUnitName);
-            Assert.AreEqual("212 fahrenheit", result);
+            Assert.AreEqual("212.00 fahrenheit", result);
         }
 
         [Test]

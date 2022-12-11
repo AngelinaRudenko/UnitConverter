@@ -21,7 +21,7 @@ namespace TestUnitConverter
             var toUnitName = "Bytes";
 
             var result = Converter.Convert($"{fromValue} {fromUnitName}", toUnitName);
-            Assert.AreEqual("12.5 bytes", result);
+            Assert.AreEqual("12.50 bytes", result);
         }
 
         [Test]
@@ -32,7 +32,7 @@ namespace TestUnitConverter
             var toUnitName = "Bits";
 
             var result = Converter.Convert($"{fromValue} {fromUnitName}", toUnitName);
-            Assert.AreEqual("800 bits", result);
+            Assert.AreEqual("800.00 bits", result);
         }
     }
 }

@@ -53,7 +53,8 @@ namespace UnitConverter.Converters.Base
 
         private string ResultToString(double value, string prefix, string unitName)
         {
-            var result = Math.Round(value, 2) + " ";
+            value = Math.Round(value, 2);
+            var result = $"{value:0.00} ";
 
             if (prefix != null)
                 result += prefix;

@@ -21,7 +21,7 @@ namespace TestUnitConverter
             var toUnitName = "Meters";
 
             var result = Converter.Convert($"{fromValue} {fromUnitName}", toUnitName);
-            Assert.AreEqual("76.2 meters", result);
+            Assert.AreEqual("76.20 meters", result);
         }
 
         [Test]
@@ -32,7 +32,7 @@ namespace TestUnitConverter
             var toUnitName = "TERAbit";
 
             var result = Converter.Convert($"{fromValue} {fromUnitName}", toUnitName);
-            Assert.AreEqual("8 terabits", result);
+            Assert.AreEqual("8.00 terabits", result);
         }
     }
 }
