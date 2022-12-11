@@ -8,13 +8,15 @@ namespace UnitConverter.Converters
     // Base unit for length is Meter
     internal class LengthConverter : BaseCategoryOfUnitsConverter
     {
-        public override Dictionary<string, ISpecificUnitConverter> Converters =>
-            new Dictionary<string, ISpecificUnitConverter>()
+        public LengthConverter()
+        {
+            Converters = new Dictionary<string, ISpecificUnitConverter>()
             {
                 { "Meters", new MeterLengthConverter() },
                 { "Feet", new FootLengthConverter() },
                 { "Foot", new FootLengthConverter() },
                 { "Inches", new InchLengthConverter() }
             };
+        }
     }
 }

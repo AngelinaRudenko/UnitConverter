@@ -9,11 +9,13 @@ namespace UnitConverter.Converters
     // Base unit for data is Bit
     internal class DataConverter : BaseCategoryOfUnitsConverter
     {
-        public override Dictionary<string, ISpecificUnitConverter> Converters =>
-            new Dictionary<string, ISpecificUnitConverter>()
+        public DataConverter()
+        {
+            Converters = new Dictionary<string, ISpecificUnitConverter>()
             {
                 { "Bits", new BitConverter() },
                 { "Bytes", new ByteConverter() }
             };
+        }
     }
 }

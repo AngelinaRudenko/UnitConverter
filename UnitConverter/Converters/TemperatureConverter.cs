@@ -8,11 +8,13 @@ namespace UnitConverter.Converters
     // Base unit for temperature is Celsius
     internal class TemperatureConverter : BaseCategoryOfUnitsConverter
     {
-        public override Dictionary<string, ISpecificUnitConverter> Converters =>
-            new Dictionary<string, ISpecificUnitConverter>()
+        public TemperatureConverter()
+        {
+            Converters = new Dictionary<string, ISpecificUnitConverter>()
             {
-                { "Celsius", new CelsiusConverter() },
-                { "Fahrenheit", new FahrenheitConverter() }
+                {"Celsius", new CelsiusConverter()},
+                {"Fahrenheit", new FahrenheitConverter()}
             };
+        }
     }
 }

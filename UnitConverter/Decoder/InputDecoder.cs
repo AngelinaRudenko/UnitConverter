@@ -2,8 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
-using UnitConverter.Converters;
-using UnitConverter.Converters.Constants;
+using UnitConverter.Converters.Base.Contracts;
 
 namespace UnitConverter.Decoder
 {
@@ -16,19 +15,26 @@ namespace UnitConverter.Decoder
 
     internal class InputDecoder
     {
+        private readonly ICategoryOfUnitsConverter[] Converters;
+
+        public InputDecoder(ICategoryOfUnitsConverter[] converters)
+        {
+            Converters = converters;
+        }
+
         public DecodedInputDTO Decode(string rawFrom, string rawTo)
         {
             var from = DecodeFrom(rawFrom);
             var toUnit = DecodeUnitString(rawTo);
 
-            var fromConverter = ConverterConstants.Converters.FirstOrDefault(
-                x => x.Converters.ContainsKey(from.unit));
+            var fromConverter = Converters
+                .FirstOrDefault(x => x.GetConverters().ContainsKey(from.unit));
 
-            var toConverter = ConverterConstants.Converters.FirstOrDefault(
-                x => x.Converters.ContainsKey(toUnit));
+            var toConverter = Converters
+                .FirstOrDefault(x => x.GetConverters().ContainsKey(toUnit));
 
             if (fromConverter?.GetType() != toConverter?.GetType())
-                throw new ValidationException("Not possible to convert between group of units.");
+                throw new ValidationException("Impossible conversion between group of units.");
 
             return new DecodedInputDTO()
             {
@@ -47,7 +53,7 @@ namespace UnitConverter.Decoder
             var numberStr = Regex.Match(text, @"\d+").Value;
 
             if (string.IsNullOrEmpty(numberStr))
-                throw new ValidationException("Input is not valid. Doesn't contain numbers.");
+                throw new ValidationException("Input is invalid. Doesn't contain numbers.");
 
             var number = Convert.ToDouble(numberStr);
 
@@ -63,16 +69,16 @@ namespace UnitConverter.Decoder
         {
             var possibleName = rawUnitName.Trim();
 
-            foreach (var categoryOfUnitConverter in ConverterConstants.Converters)
+            foreach (var categoryOfUnitConverter in Converters)
             {
-                var correctUnitName = categoryOfUnitConverter.Converters.Keys
+                var correctUnitName = categoryOfUnitConverter.GetConverters().Keys
                     .FirstOrDefault(x => x.Contains(possibleName, StringComparison.OrdinalIgnoreCase));
 
                 if (!string.IsNullOrEmpty(correctUnitName))
                     return correctUnitName;
             }
 
-            throw new ValidationException("Unit not found.");
+            throw new ValidationException($"Unit \"{possibleName}\" not found.");
         }
     }
 }

@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using UnitConverter.Contracts;
 using UnitConverter.Converters.Base.Contracts;
+using UnitConverter.Converters.SpecificUnitConverters.Length;
 
 namespace UnitConverter.Converters.Base
 {
     internal abstract class BaseCategoryOfUnitsConverter : ICategoryOfUnitsConverter
     {
-        public abstract Dictionary<string, ISpecificUnitConverter> Converters { get; }
+        protected Dictionary<string, ISpecificUnitConverter> Converters;
+
+        public Dictionary<string, ISpecificUnitConverter> GetConverters()
+        {
+            return Converters;
+        }
 
         public virtual string Convert(string fromUnit, string toUnit, double value)
         {
@@ -21,16 +27,24 @@ namespace UnitConverter.Converters.Base
             return Math.Round(result, 2) + " " + toDestinationUnitConverter.GetPluralNameForOutput;
         }
 
-        protected ISpecificUnitConverter GetSuitableConverter(string rawUnitName)
+        protected ISpecificUnitConverter GetSuitableConverter(string unitName)
         {
-            var possibleName = rawUnitName.Trim();
             var correctUnitName = Converters.Keys
-                .FirstOrDefault(x => x.Contains(possibleName, StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefault(x => x.Contains(unitName, StringComparison.OrdinalIgnoreCase));
 
             if (string.IsNullOrEmpty(correctUnitName))
-                throw new NotImplementedException($"Converter for unit type \"{rawUnitName}\" is not implemented.");
+                throw new NotImplementedException($"Converter for unit type \"{unitName}\" is not implemented.");
 
             return Converters[correctUnitName];
+        }
+
+        public void AddCustomConverter(IEnumerable<string> possibleNames, ISpecificUnitConverter customUnitConverter)
+        {
+            Converters.Add("Test", new MeterLengthConverter());
+            foreach (var name in possibleNames)
+            {
+                Converters.TryAdd(name, customUnitConverter);
+            }
         }
     }
 }
